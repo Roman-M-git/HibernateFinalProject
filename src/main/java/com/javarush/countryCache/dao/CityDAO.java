@@ -1,6 +1,7 @@
 package com.javarush.countryCache.dao;
 
 import com.javarush.countryCache.domain.City;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
@@ -14,15 +15,20 @@ public class CityDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public List<City> getItems(int offset, int limit) {
-        Query<City> query = sessionFactory.getCurrentSession().createQuery("select c from City c", City.class);
+    public List<City> getItems(Session session, int offset, int limit) {
+        Query<City> query = session.createQuery("select c from City c", City.class);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
-        return query.list();
+        return query.getResultList(); // или query.list()
     }
 
-    public int getTotalCount() {
-        Query<Long> query = sessionFactory.getCurrentSession().createQuery("select count(c) from City c", Long.class);
-        return Math.toIntExact(query.uniqueResult());
+    public int getTotalCount(Session session) {
+        Query<Long> query = session.createQuery("select count(c) from City c", Long.class);
+        Long count = query.getSingleResult(); // или uniqueResult()
+        return Math.toIntExact(count);
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 }

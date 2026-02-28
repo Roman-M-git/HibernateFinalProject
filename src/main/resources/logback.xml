@@ -1,0 +1,16 @@
+<configuration>
+    <!-- Настройка корневого логгера: уровень INFO и вывод в консоль -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Консольный аппендер (вывод в System.out) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.hibernate" level="WARN"/>
+
+</configuration>

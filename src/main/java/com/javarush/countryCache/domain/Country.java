@@ -1,67 +1,69 @@
 package com.javarush.countryCache.domain;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(schema = "world", name = "country")
-@Data
-    public class Country {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id") // может должно быть "country_id"?
-        private Integer id;
+@Getter
+@Setter
+@ToString(exclude = {"city", "languages"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Country {
 
-        private String code;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    private Integer id;
 
-        @Column(name = "code_2")
-        private String alternativeCode;
+    private String code;
 
-        private String name;
+    @Column(name = "code_2")
+    private String alternativeCode;
 
-        @Column(name = "continent")
-        @Enumerated(EnumType.ORDINAL)
-        private Continent continent;
+    private String name;
 
-        private String region;
+    @Column(name = "continent")
+    @Enumerated(EnumType.ORDINAL) // можно заменить на STRING, если в БД enum текстовый
+    private Continent continent;
 
-        @Column(name = "surface_area")
-        private BigDecimal surfaceArea;
+    private String region;
 
-        @Column(name = "indep_year")
-        private Short independenceYear;
+    @Column(name = "surface_area")
+    private BigDecimal surfaceArea;
 
-        private Integer population;
+    @Column(name = "indep_year")
+    private Short independenceYear;
 
-        @Column(name = "life_expectancy")
-        private BigDecimal lifeExpectancy;
+    private Integer population;
 
-        @Column(name = "gnp")
-        private BigDecimal GNP;
+    @Column(name = "life_expectancy")
+    private BigDecimal lifeExpectancy;
 
-        @Column(name = "gnpo_id")
-        private BigDecimal GNPOId;
+    @Column(name = "gnp")
+    private BigDecimal gnp;
 
-        @Column(name = "local_name")
-        private String localName;
+    @Column(name = "gnpo_id")
+    private BigDecimal gnpoId;
 
-        @Column(name = "government_form")
-        private String governmentForm;
+    @Column(name = "local_name")
+    private String localName;
 
-        @Column(name = "head_of_state")
-        private String headOfState;
+    @Column(name = "government_form")
+    private String governmentForm;
 
-        @OneToOne
-        @JoinColumn(name = "capital")
-        private City city;
+    @Column(name = "head_of_state")
+    private String headOfState;
 
-        @OneToMany(fetch = FetchType.EAGER)
-        @JoinColumn(name = "country_id")
-        private Set<CountryLanguage> languages;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "capital")
+    private City city;
 
-
-        //Getters and Setters omitted
-
+    // ВАЖНО: mappedBy, а не JoinColumn здесь!
+    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
+    private Set<CountryLanguage> languages = new HashSet<>();
 }
-
